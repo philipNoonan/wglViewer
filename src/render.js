@@ -50,7 +50,7 @@ gl.useProgram(gl.renderProgram);
 gl.uniform1i(gl.getUniformLocation(gl.renderProgram, 'volumeData'), 0);
 
 gl.activeTexture(gl.TEXTURE0);
-gl.bindTexture(gl.TEXTURE_3D, gl.textureHistoPyramid);
+gl.bindTexture(gl.TEXTURE_3D, gl.textureVolume);
 
 var translate = vec3.create();
 vec3.set(translate, 0, 0, -30);
@@ -82,7 +82,7 @@ gl.viewport(gl.vp.x, gl.vp.y, gl.vp.z, gl.vp.w);
 gl.uniformMatrix4fv(gl.getUniformLocation(gl.renderProgram, 'MV'), false, modelView);
 gl.uniformMatrix4fv(gl.getUniformLocation(gl.renderProgram, 'proj'), false, perspective);
 gl.uniformMatrix4fv(gl.getUniformLocation(gl.renderProgram, 'orientation'), false, matrices[0]);
-//gl.drawElements(gl.TRIANGLES, 18, gl.UNSIGNED_SHORT, 0);
+gl.drawElements(gl.TRIANGLES, 18, gl.UNSIGNED_SHORT, 0);
 ////gl.drawElementsInstanced(gl.TRIANGLES, 0, 18, 1);
 ////gl.drawArrays(gl.TRIANGLES, 0, 18);
 
@@ -102,8 +102,8 @@ gl.uniform1i(gl.getUniformLocation(gl.mcRenderProgram, 'volumeData'), 0);
 gl.activeTexture(gl.TEXTURE0);
 gl.bindTexture(gl.TEXTURE_3D, gl.textureHistoPyramid);
 
-//gl.drawArrays(gl.TRIANGLES, 0, (gl.totalSumVerts / 3));
-gl.drawArrays(gl.POINTS, 0, (gl.totalSumVerts));
+gl.drawArrays(gl.TRIANGLES, 0, (gl.totalSumVerts));
+//gl.drawArrays(gl.POINTS, 0, (gl.totalSumVerts));
 
 
 

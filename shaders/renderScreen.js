@@ -32,7 +32,7 @@ const fragmentShaderSource = `#version 310 es
         precision highp int;
         precision highp sampler3D;
 
-        layout(binding = 0) uniform highp usampler3D volumeData;
+        layout(binding = 0) uniform highp sampler3D volumeData;
 
         in vec3 v_texcoord;
 
@@ -40,21 +40,8 @@ const fragmentShaderSource = `#version 310 es
 
         void main()
         {
-
-        uvec4 dat = texelFetch(volumeData, ivec3(v_texcoord * 256.0), 0);
-        //     return uvec2((val & 4294901760u) >> 16, (val & 65535u));
-
-        //uint nrtri = (dat.x & 4294901760u) >> 16u;
-        //uint cubeindex = (dat.x & 65535u);
-
-        //if (nrtri > 0u)
-        //{
-         //       color = vec4(cubeindex * 100000u, 0, 0, 1);
-        //}
-        //color = texture(volumeData, v_texcoord);
-        color = vec4(dat.x * 10000u, 0, 0, 1);
-        //color.xyz *= 5;
-        //color = vec4(v_texcoord.x > 0.5f ? v_texcoord : vec3(0.5f), 1.0f);
+            color = texture(volumeData, v_texcoord);
+            color.xyz *= 0.001f;
         }
 `
 ;

@@ -330,15 +330,15 @@
         gl.bindBuffer(gl.SHADER_STORAGE_BUFFER, ssboHPSum);
         gl.bufferData(gl.SHADER_STORAGE_BUFFER, sumOutput, gl.DYNAMIC_COPY);
 
-        let hpVerts = new Float32Array(512*512*128*4); // some large number that we hope will fit in all the verts
+        let hpVerts = new Float32Array(512*512*512*2); // some large number that we hope will fit in all the verts
         var ssboHPVerts = gl.createBuffer();
         gl.bindBuffer(gl.SHADER_STORAGE_BUFFER, ssboHPVerts);
-        gl.bufferData(gl.SHADER_STORAGE_BUFFER, hpVerts, gl.DYNAMIC_COPY);
+        gl.bufferData(gl.SHADER_STORAGE_BUFFER, hpVerts, gl.DYNAMIC_COPY, 0, 512*512*512*2);
 
-        let hpNorms = new Float32Array(512*512*128*4); // some large number that we hope will fit in all the norms
+        let hpNorms = new Float32Array(512*512*512*2); // some large number that we hope will fit in all the norms
         var ssboHPNorms = gl.createBuffer();
         gl.bindBuffer(gl.SHADER_STORAGE_BUFFER, ssboHPNorms);
-        gl.bufferData(gl.SHADER_STORAGE_BUFFER, hpNorms, gl.DYNAMIC_COPY);
+        gl.bufferData(gl.SHADER_STORAGE_BUFFER, hpNorms, gl.DYNAMIC_COPY, 0, 512*512*512*2);
 
          var vaoMarchingCubes = gl.createVertexArray();
 
@@ -347,10 +347,10 @@
         gl.enableVertexAttribArray(vertLoc);
         gl.bindBuffer(gl.ARRAY_BUFFER, ssboHPVerts);
         gl.vertexAttribPointer(vertLoc, 4, gl.FLOAT, false, 0, 0);
-        var normLoc = 1;
-        gl.enableVertexAttribArray(vertLoc);
-        gl.bindBuffer(gl.ARRAY_BUFFER, ssboHPNorms);
-        gl.vertexAttribPointer(normLoc, 4, gl.FLOAT, false, 0, 0);
+        //var normLoc = 1;
+        //gl.enableVertexAttribArray(normLoc);
+        //gl.bindBuffer(gl.ARRAY_BUFFER, ssboHPNorms);
+        //gl.vertexAttribPointer(normLoc, 4, gl.FLOAT, false, 0, 0);
 
          gl.bindVertexArray(null);
 

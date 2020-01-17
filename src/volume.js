@@ -57,7 +57,7 @@ function constructHistoPyramid(gl) {
     const outData = new Float32Array(1);
     gl.bindBuffer(gl.SHADER_STORAGE_BUFFER, gl.ssboHPSum);
     gl.getBufferSubData(gl.SHADER_STORAGE_BUFFER, 0, outData);
-    console.log(outData);
+    //console.log(outData);
 
     gl.totalSumVerts = outData * 3;
 }

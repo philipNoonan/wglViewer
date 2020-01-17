@@ -53,7 +53,7 @@ void classifyCubes()
 {
     ivec3 pos = ivec3(gl_GlobalInvocationID.xyz);
 
-    uint cubeIndex;
+    highp uint cubeIndex;
         
     float field[8];
     field[0] = texelFetch(volumeFloatTexture, pos, 0).x;
@@ -75,9 +75,9 @@ void classifyCubes()
     cubeIndex += uint(field[7] < isoLevel) * 64u;
     cubeIndex += uint(field[6] < isoLevel) * 128u;
     
-    uint numTri = imageLoad(nrOfTriangles, ivec2(cubeIndex, 0)).x;
+    highp uint numTri = imageLoad(nrOfTriangles, ivec2(cubeIndex, 0)).x;
    
-    imageStore(volumeHPDataOutput, pos, uvec4(numTri)); 
+    imageStore(volumeHPDataOutput, pos, uvec4((numTri << 16u) | cubeIndex, 0, 0, 0)); 
 }
 
 
@@ -97,7 +97,7 @@ void constructHPLevel()
         return;
     }
 
-    uint writeValue = 0u;
+    highp uint writeValue = 0u;
 
     // on level = zero, then we read from the texture view rg16ui texture, other levels we read from the r32ui texture. this is controled in c++ code
     
@@ -119,7 +119,7 @@ void constructHPLevel()
         }
         else
         {
-            writeValue = texelFetch(histoPyramidTexture, readPos_t, 0).x +
+            writeValue = texelFetch(histoPyramidTexture, readPos_t, hpLevel).x +
             texelFetch(histoPyramidTexture, readPos_t + ivec3(cubeOffsets[1].xyz), hpLevel).x +
             texelFetch(histoPyramidTexture, readPos_t + ivec3(cubeOffsets[2].xyz), hpLevel).x +
             texelFetch(histoPyramidTexture, readPos_t + ivec3(cubeOffsets[3].xyz), hpLevel).x +
@@ -182,10 +182,10 @@ layout(std430, binding = 0) buffer posBufEncode
     vec4 posEncode [];
 };
 
-layout(std430, binding = 1) buffer normBuf
-{
-    vec4 norm [];
-};
+// layout(std430, binding = 1) buffer normBuf
+// {
+//     vec4 norm [];
+// };
 
 // uniforms
 uniform float isoLevel;
@@ -206,7 +206,7 @@ const ivec4 cubeOffsets[8] = ivec4[8](
 // current = ivec4 x y z sum
 void scanHPLevel(uint target, int lod, inout uvec4 current)
 {
-    uint neighbors[8];
+    highp uint neighbors[8];
 
     if (lod == 0)
     {
@@ -236,7 +236,7 @@ void scanHPLevel(uint target, int lod, inout uvec4 current)
 
     uint acc = uint(current.w) + neighbors[0];
 
-        uint cmp[8];
+        highp uint cmp[8];
 
         cmp[0] = acc <= target ? 1u : 0u;
         acc += neighbors[1];
@@ -304,7 +304,7 @@ void main()
     cubePosition.y /= 2u;
     cubePosition.z /= 2u;
 
-    uint vertexNr = 0u;
+    highp uint vertexNr = 0u;
 
     //uvec4 cubeData = texelFetch(histoPyramidTexture, ivec3(cubePosition.xyz), 0);
     //uint cubeIndex = uint(imageLoad(histoPyramidBaseLevel, ivec3(cubePosition.xyz)).y);
@@ -353,22 +353,22 @@ void main()
         // we need to cull verts that are outside of the viewing frustrum, therefore we need to find the viewing frustrum on the CPU then send its coords/plane eq as a uniform to the shader
         // currently we are always using a dynamic range of 0-1023 (actually its just uints 0 - 511)
         //posEncode[target * 3 + vertexNr] = uint(vertex.x) << 20 | uint(vertex.y) << 10 | uint(vertex.z);
-        if (vertex.x < 1022.0f && vertex.y < 1022.0f && vertex.z < 1022.0f && vertex.x > 1.0f && vertex.y > 1.0f && vertex.z > 1.0f)
-        {
+        //if (vertex.x < 1022.0f && vertex.y < 1022.0f && vertex.z < 1022.0f && vertex.x > 1.0f && vertex.y > 1.0f && vertex.z > 1.0f)
+        //{
             posEncode[target * 3u + vertexNr] = vec4(vertex.xyz, 1.0f);//uint(vertex.x) << 20u | uint(vertex.y) << 10u | uint(vertex.z);
-            norm[target * 3u + vertexNr] = vec4(normal, 0.0f);
+        //    norm[target * 3u + vertexNr] = vec4(normal, 0.0f);
 
-        }
-        else
-        {
-            for (uint vertN = 0u; vertN < 3u; vertN++)
-            {
-                posEncode[target * 3u + vertN] = vec4(0.0f);
-                norm[target * 3u + vertN] = vec4(0.0f);
-            }
-            break;
-
-        }
+        //}
+        //else
+        //{
+        //    for (uint vertN = 0u; vertN < 3u; vertN++)
+        //    {
+        //        posEncode[target * 3u + vertN] = vec4(0.0f);
+        //        norm[target * 3u + vertN] = vec4(0.0f);
+        //    }
+        //    break;
+//
+        //}
 
 
         // output normals here if we want to calc it here rather than in vertshader stage

@@ -30,3 +30,13 @@ body {
 a {
     color: #0080ff;
 }
+
+#controls {
+    margin-left: 200px;
+}
+
+#sliders {
+    float: left;
+    width: 200px;
+    margin-left: -200px;
+}

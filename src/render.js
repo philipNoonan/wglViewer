@@ -24,6 +24,50 @@ cosPitch * cosRoll,
 ];
 }
 
+function setOrthoVerts(x, y, z) {
+  var positions = new Float32Array([
+    1.0,	1.0,	z * 2.0 - 1.0,		// top right
+    1.0,	-1.0,	z * 2.0 - 1.0,		 // bottom right
+    -1.0,	-1.0,	z * 2.0 - 1.0,		 // bottom left
+    -1.0,	1.0,	z * 2.0 - 1.0,		  // Top left
+
+    x * 2.0 - 1.0, 1.0,	1.0,		     // top right
+    x * 2.0 - 1.0, 1.0,  -1.0,		     // bottom right
+    x * 2.0 - 1.0, -1.0, -1.0,		     // bottom left
+    x * 2.0 - 1.0, -1.0,  1.0,		      // Top left
+
+    1.0,	y * 2.0 - 1.0, 1.0,			 // top right
+    1.0,	y * 2.0 - 1.0, -1.0,		 // bottom right
+    -1.0,	y * 2.0 - 1.0, -1.0,		 // bottom left
+    -1.0,	y * 2.0 - 1.0, 1.0]);
+
+gl.bindBuffer(gl.ARRAY_BUFFER, gl.vertexPosBuffer);
+gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+
+var texCoords = new Float32Array([
+1.0, 1.0, z, // top right
+1.0, 0.0, z, // bottom right
+0.0, 0.0, z, // bottom left
+0.0, 1.0, z, // Top left
+
+x, 1.0, 1.0, // top right
+x, 1.0, 0.0, // bottom right
+x, 0.0, 0.0, // bottom left
+x, 0.0, 1.0, // Top left
+
+1.0, y, 1.0, // top right
+1.0, y, 0.0, // bottom right
+0.0, y, 0.0, // bottom left
+0.0, y, 1.0, // Top left
+]);
+
+gl.bindBuffer(gl.ARRAY_BUFFER, gl.vertexTexBuffer);
+gl.bufferData(gl.ARRAY_BUFFER, texCoords, gl.STATIC_DRAW);
+gl.bindBuffer(gl.ARRAY_BUFFER, null);
+}
+
 function render(gl) {
 
 gl.orientation[0] += 0.005; // yaw
@@ -36,6 +80,8 @@ var pitchMatrix = new Float32Array(yawPitchRoll(0.0, gl.orientation[1], 0.0));
 var rollMatrix = new Float32Array(yawPitchRoll(0.0, 0.0, gl.orientation[2]));
 var yawPitchRollMatrix = new Float32Array(yawPitchRoll(gl.orientation[0], gl.orientation[1], gl.orientation[2]));
 var matrices = [yawMatrix, pitchMatrix, rollMatrix, yawPitchRollMatrix];
+
+setOrthoVerts(gl.sliderX.value / gl.size, gl.sliderY.value / gl.size, gl.sliderZ.value / gl.size);
 
 // Clear color buffer
 gl.clearColor(0.0, 0.0, 0.0, 1.0);
@@ -53,7 +99,7 @@ gl.activeTexture(gl.TEXTURE0);
 gl.bindTexture(gl.TEXTURE_3D, gl.textureVolume);
 
 var translate = vec3.create();
-vec3.set(translate, 0, 0, -30);
+vec3.set(translate, 0, 0, -gl.zoom);
 var modelView = mat4.create();
 mat4.translate(modelView, modelView, translate);
 mat4.rotateX(modelView, modelView, 0.2);
@@ -102,7 +148,7 @@ gl.uniform1i(gl.getUniformLocation(gl.mcRenderProgram, 'volumeData'), 0);
 gl.activeTexture(gl.TEXTURE0);
 gl.bindTexture(gl.TEXTURE_3D, gl.textureHistoPyramid);
 
-gl.drawArrays(gl.TRIANGLES, 0, (gl.totalSumVerts));
+gl.drawArrays(gl.LINES, 0, (gl.totalSumVerts));
 //gl.drawArrays(gl.POINTS, 0, (gl.totalSumVerts));
 
 

@@ -2,23 +2,21 @@ const mcVertexShaderSource = `#version 310 es
     precision highp float;
     precision highp int;
 
-    layout(location = 0) in vec4 positionMC;
-    //layout(location = 1) in vec4 normalMC;
+    layout(location = 0) in float positionMC;
 
     uniform float MCScaleFactor;
     uniform mat4 MVP;
 
     out vec3 TexCoord3D;
-    //out vec3 Normal;
 
     void main()
     {
-        //vec3 vertPoint = 128.0f + (MCScaleFactor *  vec3((positionMC & 1072693248u) >> 20u, (positionMC & 1047552u) >> 10u, positionMC & 1023u));
-        vec3 vertPoint = vec3(positionMC.xyz);
+        highp uint uData = floatBitsToUint(positionMC);
 
-        //Normal = normalMC.xyz;
-        TexCoord3D = vertPoint / 256.0f;
-        gl_Position = vec4(MVP * vec4((vertPoint - vec3(256.0f)) / 32.0f, 1.0f));
+        vec3 vertPoint = 0.5f * vec3((uData & 1072693248u) >> 20u, (uData & 1047552u) >> 10u, uData & 1023u);
+        
+        TexCoord3D = vertPoint / 512.0f;
+        gl_Position = vec4(MVP * vec4((vertPoint / 256.0f) - 1.0f, 1.0f));
 
     }
 `
@@ -31,7 +29,6 @@ const mcFragmentShaderSource = `#version 310 es
     
     uniform highp usampler3D volumeData;
     in vec3 TexCoord3D;
-    //in vec3 Normal;
     
     out vec4 color;
     

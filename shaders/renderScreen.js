@@ -20,7 +20,7 @@ const vertexShaderSource = `#version 310 es
         void main()
         {
         v_texcoord = in_texcoord.xyz;
-        gl_Position = proj * MV * vec4(position.x * 10.0, position.y*10.0, position.z*10.0, 1.0);
+        gl_Position = proj * MV * vec4(position.x, position.y, position.z, 1.0);
         }
 
 `

@@ -70,9 +70,9 @@ gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
 function render(gl) {
 
-gl.orientation[0] += 0.005; // yaw
-gl.orientation[1] += 0.005; // pitch
-gl.orientation[2] += 0.005; // roll
+gl.orientation[0] = gl.rotation[0]; // yaw
+gl.orientation[1] = gl.rotation[1]; // pitch
+gl.orientation[2] += 0.001; // roll
 
 
 var yawMatrix = new Float32Array(yawPitchRoll(gl.orientation[0], 0.0, 0.0));
@@ -99,10 +99,10 @@ gl.activeTexture(gl.TEXTURE0);
 gl.bindTexture(gl.TEXTURE_3D, gl.textureVolume);
 
 var translate = vec3.create();
-vec3.set(translate, 0, 0, -gl.zoom);
+vec3.set(translate, gl.cameraPos[0], gl.cameraPos[1], -gl.zoom);
 var modelView = mat4.create();
 mat4.translate(modelView, modelView, translate);
-mat4.rotateX(modelView, modelView, 0.2);
+mat4.rotateX(modelView, modelView, gl.orientation[1]);
 
 
 
@@ -128,7 +128,11 @@ gl.viewport(gl.vp.x, gl.vp.y, gl.vp.z, gl.vp.w);
 gl.uniformMatrix4fv(gl.getUniformLocation(gl.renderProgram, 'MV'), false, modelView);
 gl.uniformMatrix4fv(gl.getUniformLocation(gl.renderProgram, 'proj'), false, perspective);
 gl.uniformMatrix4fv(gl.getUniformLocation(gl.renderProgram, 'orientation'), false, matrices[0]);
-gl.drawElements(gl.TRIANGLES, 18, gl.UNSIGNED_SHORT, 0);
+
+if (gl.renderOrtho.checked == true)
+{
+  gl.drawElements(gl.TRIANGLES, 18, gl.UNSIGNED_SHORT, 0);
+}
 ////gl.drawElementsInstanced(gl.TRIANGLES, 0, 18, 1);
 ////gl.drawArrays(gl.TRIANGLES, 0, 18);
 
@@ -148,7 +152,9 @@ gl.uniform1i(gl.getUniformLocation(gl.mcRenderProgram, 'volumeData'), 0);
 gl.activeTexture(gl.TEXTURE0);
 gl.bindTexture(gl.TEXTURE_3D, gl.textureHistoPyramid);
 
-gl.drawArrays(gl.TRIANGLES, 0, (gl.totalSumVerts));
+if (gl.renderMC.checked == true) {
+  gl.drawArrays(gl.TRIANGLES, 0, (gl.totalSumVerts));
+}
 //gl.drawArrays(gl.POINTS, 0, (gl.totalSumVerts));
 
 

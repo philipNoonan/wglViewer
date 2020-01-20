@@ -148,7 +148,7 @@ gl.uniform1i(gl.getUniformLocation(gl.mcRenderProgram, 'volumeData'), 0);
 gl.activeTexture(gl.TEXTURE0);
 gl.bindTexture(gl.TEXTURE_3D, gl.textureHistoPyramid);
 
-gl.drawArrays(gl.LINES, 0, (gl.totalSumVerts));
+gl.drawArrays(gl.TRIANGLES, 0, (gl.totalSumVerts));
 //gl.drawArrays(gl.POINTS, 0, (gl.totalSumVerts));
 
 

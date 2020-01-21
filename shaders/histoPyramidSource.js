@@ -25,6 +25,7 @@ layout(binding = 1) uniform highp sampler3D volumeFloatTexture;
 uniform int functionID;
 uniform int hpLevel;
 uniform float isoLevel;
+uniform int maxLevel;
 
 layout(std430, binding = 0) buffer outSum
 {
@@ -132,7 +133,7 @@ void constructHPLevel()
 
         imageStore(volumeHPDataOutput, ivec3(writePos), uvec4(writeValue));
 
-        if (hpLevel == 8)
+        if (hpLevel == maxLevel)
         {
             sumData.data = float(writeValue);
         }
@@ -352,7 +353,9 @@ void main()
         
 
         //vertex = 1023.0f * smoothstep(0.0f, 512.0f, vertex); // 1023 since we are packing using 10 bits (1024 levels)
-        vertex = (vertex / vec3(511.0f)) * vec3(1023.0f);
+        
+        //vertex = vertex * pixDims;
+        vertex = (vertex / vec3(texSize.x)) * vec3(1023.0f);
 
         // we would like to scale this so that you are not losing precision when we zoom in.
         // we need to cull verts that are outside of the viewing frustrum, therefore we need to find the viewing frustrum on the CPU then send its coords/plane eq as a uniform to the shader

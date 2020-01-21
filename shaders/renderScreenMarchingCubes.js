@@ -6,6 +6,7 @@ const mcVertexShaderSource = `#version 310 es
 
     uniform float MCScaleFactor;
     uniform mat4 MVP;
+    uniform vec3 pixDims;
 
     out vec3 TexCoord3D;
 
@@ -13,10 +14,11 @@ const mcVertexShaderSource = `#version 310 es
     {
         highp uint uData = floatBitsToUint(positionMC);
 
-        vec3 vertPoint = 0.5f * vec3((uData & 1072693248u) >> 20u, (uData & 1047552u) >> 10u, uData & 1023u);
+        vec3 vertPoint = vec3((uData & 1072693248u) >> 20u, (uData & 1047552u) >> 10u, uData & 1023u); // scaled between 0 - 1023
         
-        TexCoord3D = vertPoint / 512.0f;
-        gl_Position = vec4(MVP * vec4((vertPoint / 256.0f) - 1.0f, 1.0f));
+        TexCoord3D = vertPoint / 1023.0f; // scaled between 0 - 1
+        vec4 worldPoint = vec4((TexCoord3D * 2.0f - 1.0f) * pixDims, 1.0f); 
+        gl_Position = vec4(MVP * worldPoint); // scale between -1 and 1
 
     }
 `

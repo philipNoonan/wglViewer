@@ -90,6 +90,7 @@
             var textureVolume = generateTexture(gl, gl.TEXTURE_3D, gl.R32F, 1, volSize, volSize, volSize, gl.LINEAR, gl.LINEAR_MIPMAP_NEAREST);
             var textureHistoPyramid = generateTexture(gl, gl.TEXTURE_3D, gl.R32UI, numberOfLevels, volSize, volSize, volSize, gl.NEAREST, gl.NEAREST_MIPMAP_NEAREST);
 
+            gl.pixDims = [header.pixDims[1], header.pixDims[2], header.pixDims[3]];
             gl.textureVolume = textureVolume;
             gl.textureHistoPyramid = textureHistoPyramid;
             gl.size = volSize;
@@ -155,6 +156,10 @@
             var files = evt.target.files;
             readFile(files[0]);
         }
+
+        function loadDemoFile() {
+
+        }
     </script>
 
 </head>
@@ -172,6 +177,10 @@
             <div id="select" style="font-family:sans-serif">
                 <p>Select a file: </p>
                 <input type="file" id="file" name="files" />
+                
+                <!--<p>Or load demo file: </p>
+                <button onclick="loadDemoFile()"></button>
+                -->
                 <script type="text/javascript">
                     document.getElementById('file').addEventListener('change', handleFileSelect, false);
                 </script>
@@ -187,6 +196,8 @@
                     <input type="range" min="0.0" max="512" step="1" value="0" class="slider" id="ySlider">
                     <p>Z: <span id="zText"></span></p>
                     <input type="range" min="0.0" max="512" step="1" value="0" class="slider" id="zSlider">
+                    <p>Color: <span id="colorText"></span></p>
+                    <input type="range" min="0.0" max="0.001" step="0.00001" value="0.00005" class="slider" id="colorScaleSlider">
                 </div>
 
                 <div id="renderOpt">
@@ -207,7 +218,7 @@
 
         var gl;
 
-        function divup(a, b) { return (a % b != 0) ? (a / b + 1) : (a / b); }
+        function divup(a, b) { return (a % b != 0) ? Math.ceil(a / b) : (a / b); }
 
         var stats = new Stats();
         stats.showPanel(0);
@@ -245,6 +256,13 @@
 
     sliderY.oninput = function() {
         textY.innerHTML = this.value;
+    }
+
+    var sliderColorScale = document.getElementById("colorScaleSlider");
+    var textColor = document.getElementById("colorText");
+
+    sliderColorScale.oninput = function() {
+        textColor.innerHTML = this.value;
     }
 
  
@@ -561,6 +579,7 @@
         gl.sliderX = sliderX;
         gl.sliderY = sliderY;
         gl.sliderZ = sliderZ;
+        gl.colorScale = sliderColorScale;
 
         gl.renderProgram = renderProgram;
         gl.vertexPosBuffer = vertexPosBuffer;

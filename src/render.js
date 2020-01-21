@@ -89,7 +89,7 @@ gl.clear(gl.COLOR_BUFFER_BIT);
 gl.clearDepth(1.0);                 // Clear everything
 gl.enable(gl.DEPTH_TEST);           // Enable depth testing
 gl.depthFunc(gl.LEQUAL); // Near things obscure far things
-
+gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 // Bind program
 gl.useProgram(gl.renderProgram);
 
@@ -110,7 +110,7 @@ mat4.rotateY(modelView, modelView, gl.orientation[0]);
 
 var perspective = mat4.create();
 
-mat4.perspective(perspective, 45 * Math.PI / 180, gl.canvas.clientWidth / gl.canvas.clientHeight, 1, 100);
+mat4.perspective(perspective, 45 * Math.PI / 180, gl.canvas.clientWidth / gl.canvas.clientHeight, .01, 1000);
 
 var MVP = mat4.create();
 
@@ -128,6 +128,8 @@ gl.viewport(gl.vp.x, gl.vp.y, gl.vp.z, gl.vp.w);
 gl.uniformMatrix4fv(gl.getUniformLocation(gl.renderProgram, 'MV'), false, modelView);
 gl.uniformMatrix4fv(gl.getUniformLocation(gl.renderProgram, 'proj'), false, perspective);
 gl.uniformMatrix4fv(gl.getUniformLocation(gl.renderProgram, 'orientation'), false, matrices[0]);
+gl.uniform3fv(gl.getUniformLocation(gl.renderProgram, "pixDims"), gl.pixDims);
+gl.uniform1f(gl.getUniformLocation(gl.renderProgram, "colorScale"), gl.colorScale.value);
 
 if (gl.renderOrtho.checked == true)
 {
@@ -149,6 +151,8 @@ gl.bindVertexArray(gl.vaoMarchingCubes);
 gl.uniformMatrix4fv(gl.getUniformLocation(gl.mcRenderProgram, 'MVP'), false, MVP);
 gl.uniform1f(gl.getUniformLocation(gl.mcRenderProgram, 'MCScaleFactor'), 0.25);
 gl.uniform1i(gl.getUniformLocation(gl.mcRenderProgram, 'volumeData'), 0);
+gl.uniform3fv(gl.getUniformLocation(gl.mcRenderProgram, "pixDims"), gl.pixDims);
+
 gl.activeTexture(gl.TEXTURE0);
 gl.bindTexture(gl.TEXTURE_3D, gl.textureHistoPyramid);
 

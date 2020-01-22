@@ -14,14 +14,14 @@ const vertexShaderSource = `#version 310 es
 
         // Matrix to transform the texture coordinates into 3D space
         uniform mat4 orientation;
-        uniform mat4 proj;
-        uniform mat4 MV;
+        uniform mat4 MVP;
         uniform vec3 pixDims;
+        uniform vec3 volRatio;
 
         void main()
         {
-        v_texcoord = in_texcoord.xyz;
-        gl_Position = proj * MV * vec4(position.xyz * pixDims, 1.0);
+            v_texcoord = in_texcoord.xyz;
+            gl_Position = MVP * vec4(position.xyz * pixDims, 1.0);
         }
 
 `
@@ -52,7 +52,7 @@ const fragmentShaderSource = `#version 310 es
             //color = vec4(data * 1000u, 0, 0, 1);
 
             color = texture(volumeData, v_texcoord);
-            if (color.x == 0.0f)
+            if (color.x < 0.0001f)
             {
                 discard;
                 color.w = 0.0f;

@@ -158,32 +158,7 @@
             readFile(files[0]);
         }
 
-        async function postData(url = '') {
-            // Default options are marked with *
-            const response = await fetch(url, {
-                method: 'GET', // *GET, POST, PUT, DELETE, etc.
-                mode: 'no-cors', // no-cors, *cors, same-origin
-                cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-                credentials: 'same-origin', // include, *same-origin, omit
-                //headers: {
-                //'Content-Type': 'application/json'
-                // 'Content-Type': 'application/x-www-form-urlencoded',
-                //},
-                //redirect: 'follow', // manual, *follow, error
-                //referrerPolicy: 'no-referrer', // no-referrer, *client
-                //body: JSON.stringify(data) // body data type must match "Content-Type" header
-            });
-            const reader = response.body.getReader();
 
-            //return await response.json(); // parses JSON response into native JavaScript objects
-            }
-
-        function loadDemoFile() {
-            var url = "https://1drv.ms/u/s!Ai6c-LbX0xhnhMUPEbNEZdKmKlf6Vw?e=fBAVYz";
-            // Example POST method implementation:
-           postData(url);
-
-        }
 
     </script>
 
@@ -196,8 +171,8 @@
         <p>Have you tried to open your browser using these arguments ?</p>
         <p>Windows: </p>
         <pre>chrome.exe --use-cmd-decoder=passthrough --use-angle=gl --enable-webgl2-compute-context</pre>
-        <p>Linux - NOT TESTED: </p>
-        <pre>chrome --use-gl=angle --use-angle=gl --use-cmd-decoder=passthrough --enable-webgl2-compute-context</pre>
+        <p>Linux - USE CHROME DEV: </p>
+        <pre>google-chrome-unstable --use-gl=angle --use-angle=gl --use-cmd-decoder=passthrough --enable-webgl2-compute-context</pre>
     </div>
 
     <div class="clear"></div>
@@ -213,9 +188,6 @@
             <div id="select" style="font-family:sans-serif">
                 <p>Select a file: </p>
                 <input type="file" id="file" name="files" />
-                
-                <p>Or load demo file: </p>
-                <button onclick="loadDemoFile()"></button>
             
                 <script type="text/javascript">
                     document.getElementById('file').addEventListener('change', handleFileSelect, false);
